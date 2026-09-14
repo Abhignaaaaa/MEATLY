@@ -22,6 +22,7 @@ export default function AccountView({
   onNavigateToFavorites,
   onNavigateToOrders,
   onNavigateToHelp,
+  onNavigateToShopRegister,
   onNavigateToLogin,
   onExploreShops
 }) {

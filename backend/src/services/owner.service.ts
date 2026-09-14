@@ -4,6 +4,47 @@ import { Order, OrderStatus } from '../models/Order.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export class OwnerService {
+
+  // ONBOARDING & APPLICATION
+  async submitShopApplication(userId: string, data: any) {
+    const existing = await Shop.findOne({ ownerId: userId });
+    if (existing) {
+      throw ApiError.badRequest('You already have a shop application or registered shop.');
+    }
+    
+    // Create inactive shop with PENDING status
+    const application = new Shop({
+      ...data,
+      ownerId: userId,
+      isActive: false,
+      isOpen: false,
+      applicationStatus: 'PENDING',
+      submittedAt: new Date()
+    });
+    
+    await application.save();
+    return application;
+  }
+
+  async getMyApplication(userId: string) {
+    return Shop.findOne({ ownerId: userId });
+  }
+
+  async resubmitShopApplication(userId: string, id: string, data: any) {
+    const application = await Shop.findOne({ _id: id, ownerId: userId });
+    if (!application) {
+      throw ApiError.notFound('Application not found');
+    }
+    if (application.applicationStatus !== 'REJECTED') {
+      throw ApiError.badRequest('Can only resubmit a rejected application.');
+    }
+
+    Object.assign(application, data);
+    application.applicationStatus = 'PENDING';
+    application.submittedAt = new Date();
+    await application.save();
+    return application;
+  }
   // DASHBOARD
   async getDashboardStats(shopId: string) {
     const today = new Date();

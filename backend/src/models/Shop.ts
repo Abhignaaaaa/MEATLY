@@ -9,6 +9,7 @@ export interface IShopReview {
 }
 
 export interface IShop extends Document {
+  ownerId?: mongoose.Types.ObjectId;
   name: string;
   description: string;
   imageUrl: string;
@@ -28,6 +29,19 @@ export interface IShop extends Document {
   isTopRated: boolean;
   isActive: boolean;
   reviews: IShopReview[];
+  
+  applicationStatus?: 'NONE' | 'PENDING' | 'APPROVED' | 'REJECTED';
+  ownerName?: string;
+  email?: string;
+  city?: string;
+  pincode?: string;
+  shopType?: string;
+  deliveryRadius?: string;
+  rejectionReason?: string;
+  submittedAt?: Date;
+  reviewedAt?: Date;
+  reviewedBy?: mongoose.Types.ObjectId;
+
   createdAt: Date;
   updatedAt: Date;
 }
@@ -53,15 +67,28 @@ const ShopSchema: Schema = new Schema(
     rating: { type: Number, default: 4.5 },
     reviewsCount: { type: Number, default: 50 },
     distance: { type: String, default: '1.5 km' },
-    deliveryTime: { type: String, default: '25–35 min' },
-    openingHours: { type: String, default: '8:00 AM – 9:00 PM' },
+    deliveryTime: { type: String, default: '25-35 min' },
+    openingHours: { type: String, default: '8:00 AM - 9:00 PM' },
     minOrder: { type: Number, default: 199 },
-    deliveryFee: { type: String, default: 'Free delivery above ₹499' },
+    deliveryFee: { type: String, default: 'Free delivery above ₹1499' },
     isOpen: { type: Boolean, default: true },
     isPopular: { type: Boolean, default: false },
     isTopRated: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     reviews: [ShopReviewSchema],
+
+    // Onboarding & Application Fields
+    applicationStatus: { type: String, enum: ['NONE', 'PENDING', 'APPROVED', 'REJECTED'], default: 'NONE' },
+    ownerName: { type: String },
+    email: { type: String },
+    city: { type: String },
+    pincode: { type: String },
+    shopType: { type: String },
+    deliveryRadius: { type: String },
+    rejectionReason: { type: String },
+    submittedAt: { type: Date },
+    reviewedAt: { type: Date },
+    reviewedBy: { type: Schema.Types.ObjectId, ref: 'User' },
   },
   {
     timestamps: true,

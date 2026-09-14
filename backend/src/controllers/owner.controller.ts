@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { ownerService } from '../services/owner.service.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { OwnerRequest } from '../middleware/owner.middleware.js';
@@ -53,4 +53,19 @@ export const updateOrderStatus = asyncHandler(async (req: OwnerRequest, res: Res
   const { status } = req.body;
   const order = await ownerService.updateOrderStatus(req.shopId!, req.params.id, status);
   res.status(200).json({ success: true, data: order });
+});
+
+export const submitShopApplication = asyncHandler(async (req: any, res: Response) => {
+  const application = await ownerService.submitShopApplication(req.user!.userId, req.body);
+  res.status(201).json({ success: true, data: application });
+});
+
+export const getMyApplication = asyncHandler(async (req: any, res: Response) => {
+  const application = await ownerService.getMyApplication(req.user!.userId);
+  res.status(200).json({ success: true, data: application });
+});
+
+export const resubmitShopApplication = asyncHandler(async (req: any, res: Response) => {
+  const application = await ownerService.resubmitShopApplication(req.user!.userId, req.params.id, req.body);
+  res.status(200).json({ success: true, data: application });
 });

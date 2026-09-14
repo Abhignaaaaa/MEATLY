@@ -72,3 +72,33 @@ export const getOrderById = async (req: Request, res: Response, next: NextFuncti
     next(error);
   }
 };
+
+
+export const getShopApplications = async (req: any, res: Response, next: any) => {
+  try {
+    const applications = await adminService.getShopApplications();
+    res.status(200).json({ success: true, data: applications });
+  } catch(error) { next(error); }
+};
+
+export const getShopApplicationById = async (req: any, res: Response, next: any) => {
+  try {
+    const application = await adminService.getShopApplicationById(req.params.id);
+    res.status(200).json({ success: true, data: application });
+  } catch(error) { next(error); }
+};
+
+export const approveShopApplication = async (req: any, res: Response, next: any) => {
+  try {
+    const application = await adminService.approveShopApplication(req.params.id, req.user.userId);
+    res.status(200).json({ success: true, data: application });
+  } catch(error) { next(error); }
+};
+
+export const rejectShopApplication = async (req: any, res: Response, next: any) => {
+  try {
+    const { reason } = req.body;
+    const application = await adminService.rejectShopApplication(req.params.id, reason, req.user.userId);
+    res.status(200).json({ success: true, data: application });
+  } catch(error) { next(error); }
+};

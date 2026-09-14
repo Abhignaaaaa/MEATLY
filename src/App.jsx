@@ -17,6 +17,12 @@ import LoginView from './views/LoginView';
 import SignupView from './views/SignupView';
 import VerifyOtpView from './views/VerifyOtpView';
 import AuthSuccessView from './views/AuthSuccessView';
+
+import ShopApplicationView from './views/ShopApplicationView';
+import ShopApplicationStatusView from './views/ShopApplicationStatusView';
+import AdminShopApplicationsView from './views/admin/AdminShopApplicationsView';
+import AdminShopApplicationDetailsView from './views/admin/AdminShopApplicationDetailsView';
+
 import DesignSystem from './design-system/DesignSystem';
 import AuthGuard from './components/auth/AuthGuard';
 import OwnerGuard from './components/auth/OwnerGuard';
@@ -176,7 +182,34 @@ function AppContent() {
     );
   }
 
+
+  // SHOP OWNER REGISTRATION
+  if (currentView === 'shop-register') {
+    return (
+      <AuthGuard onNavigateToLogin={() => navigateTo('login')} onBackToHome={() => navigateTo('home')} onExploreShops={() => navigateTo('explore')} activeTab="profile">
+        <ShopApplicationView
+          onBack={() => navigateTo('account')}
+          onSuccess={() => navigateTo('shop-application-status')}
+        />
+      </AuthGuard>
+    );
+  }
+
+  if (currentView === 'shop-application-status') {
+    return (
+      <AuthGuard onNavigateToLogin={() => navigateTo('login')} onBackToHome={() => navigateTo('home')} onExploreShops={() => navigateTo('explore')} activeTab="profile">
+        <ShopApplicationStatusView
+          onBack={() => navigateTo('account')}
+          onNavigateToDashboard={() => navigateTo('owner-dashboard')}
+          onNavigateToResubmit={() => navigateTo('shop-register')}
+          onNavigateToRegister={() => navigateTo('shop-register')}
+        />
+      </AuthGuard>
+    );
+  }
+
   // PROTECTED CUSTOMER VIEWS
+
   if (currentView === 'checkout') {
     return (
       <AuthGuard onNavigateToLogin={() => navigateTo('login')} onBackToHome={() => navigateTo('home')} onExploreShops={() => navigateTo('explore')} activeTab="cart">
@@ -239,6 +272,7 @@ function AppContent() {
           onNavigateToFavorites={() => navigateTo('account-favorites')}
           onNavigateToOrders={() => navigateTo('orders')}
           onNavigateToHelp={() => navigateTo('account-help')}
+          onNavigateToShopRegister={() => navigateTo('shop-application-status')}
           onNavigateToLogin={() => navigateTo('login')}
           onExploreShops={() => navigateTo('explore')}
         />
@@ -364,7 +398,11 @@ function AppContent() {
           {currentView === 'admin-users' && <AdminUsersView onNavigate={navigateTo} />}
           {currentView === 'admin-shops' && <AdminShopsView onNavigate={navigateTo} />}
           {currentView === 'admin-products' && <AdminProductsView onNavigate={navigateTo} />}
+
           {currentView === 'admin-orders' && <AdminOrdersView onNavigate={navigateTo} />}
+          {currentView === 'admin-applications' && <AdminShopApplicationsView onNavigate={navigateTo} />}
+          {currentView.startsWith('admin-application-details:') && <AdminShopApplicationDetailsView applicationId={currentView.split(':')[1]} onBack={() => navigateTo('admin-applications')} />}
+
         </AdminLayout>
       </AdminGuard>
     );

@@ -15,6 +15,11 @@ router.get('/users', adminController.getUsers);
 router.get('/shops', adminController.getShops);
 router.patch('/shops/:id/status', adminController.updateShopStatus);
 
+router.get('/shop-applications', adminController.getShopApplications);
+router.get('/shop-applications/:id', adminController.getShopApplicationById);
+router.patch('/shop-applications/:id/approve', adminController.approveShopApplication);
+router.patch('/shop-applications/:id/reject', adminController.rejectShopApplication);
+
 router.get('/products', adminController.getProducts);
 router.patch('/products/:id/availability', adminController.updateProductAvailability);
 

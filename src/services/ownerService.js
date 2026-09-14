@@ -13,5 +13,9 @@ export const ownerService = {
   
   getOrders: (params) => apiClient.get('/owner/orders', params),
   getOrderById: (id) => apiClient.get(`/owner/orders/${id}`),
-  updateOrderStatus: (id, status) => apiClient.patch(`/owner/orders/${id}/status`, { status })
+  updateOrderStatus: (id, status) => apiClient.patch(`/owner/orders/${id}/status`, { status }),
+  
+  submitApplication: (data) => apiClient.post('/owner/applications', data),
+  getMyApplication: () => apiClient.get('/owner/applications/me'),
+  resubmitApplication: (id, data) => apiClient.patch(`/owner/applications/${id}/resubmit`, data)
 };

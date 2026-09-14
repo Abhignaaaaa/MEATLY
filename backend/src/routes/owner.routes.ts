@@ -11,13 +11,22 @@ import {
   updateProductAvailability,
   getOrders,
   getOrderById,
-  updateOrderStatus
+  updateOrderStatus,
+  submitShopApplication,
+  getMyApplication,
+  resubmitShopApplication
 } from '../controllers/owner.controller.js';
 
 const router = Router();
 
-// All owner routes require authentication AND owner role + valid shop link
-router.use(authenticate, requireOwner);
+// Routes for applying to become a shop owner (only requires authentication)
+router.use(authenticate);
+router.post('/applications', submitShopApplication);
+router.get('/applications/me', getMyApplication);
+router.patch('/applications/:id/resubmit', resubmitShopApplication);
+
+// All subsequent owner routes require authentication AND owner role + valid shop link
+router.use(requireOwner);
 
 // Dashboard
 router.get('/dashboard', getDashboardStats);

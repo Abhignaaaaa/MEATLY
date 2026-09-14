@@ -36,9 +36,27 @@ export const adminRepository = {
     return res.data;
   },
 
+
   getOrderById: async (id) => {
     const res = await adminService.getOrderById(id);
     return res.data;
+  },
+  getShopApplications: async () => {
+    const res = await adminService.getShopApplications();
+    return res.data;
+  },
+  getShopApplicationById: async (id) => {
+    const res = await adminService.getShopApplicationById(id);
+    return res.data;
+  },
+  approveShopApplication: async (id) => {
+    const res = await adminService.approveShopApplication(id);
+    return res.data;
+  },
+  rejectShopApplication: async (id, reason) => {
+    const res = await adminService.rejectShopApplication(id, reason);
+    return res.data;
   }
 };
+
 

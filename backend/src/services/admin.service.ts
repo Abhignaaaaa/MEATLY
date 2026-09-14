@@ -5,6 +5,60 @@ import { Order } from '../models/Order.js';
 import { ApiError } from '../utils/ApiError.js';
 
 export class AdminService {
+
+  async getShopApplications() {
+    return Shop.find({ applicationStatus: { $in: ['PENDING', 'APPROVED', 'REJECTED'] } }).sort({ createdAt: -1 });
+  }
+
+  async getShopApplicationById(id: string) {
+    const application = await Shop.findById(id);
+    if (!application) {
+      throw ApiError.notFound('Application not found');
+    }
+    return application;
+  }
+
+  async approveShopApplication(id: string, adminId: string) {
+    const application = await Shop.findById(id);
+    if (!application) {
+      throw ApiError.notFound('Application not found');
+    }
+
+    application.applicationStatus = 'APPROVED';
+    application.isActive = true;
+    application.isOpen = true;
+    application.reviewedAt = new Date();
+    application.reviewedBy = adminId as any;
+
+    await application.save();
+
+    // Make user a shop owner
+    const User = (await import('../models/User.js')).User;
+    await User.findByIdAndUpdate(application.ownerId, { role: 'shop_owner' });
+
+    return application;
+  }
+
+  async rejectShopApplication(id: string, reason: string, adminId: string) {
+    if (!reason || !reason.trim()) {
+      throw ApiError.badRequest('Rejection reason is required');
+    }
+
+    const application = await Shop.findById(id);
+    if (!application) {
+      throw ApiError.notFound('Application not found');
+    }
+
+    application.applicationStatus = 'REJECTED';
+    application.rejectionReason = reason;
+    application.isActive = false;
+    application.isOpen = false;
+    application.reviewedAt = new Date();
+    application.reviewedBy = adminId as any;
+
+    await application.save();
+    return application;
+  }
   async getDashboardStats() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);

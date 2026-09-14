@@ -56,9 +56,28 @@ export const ownerRepository = {
     return res.data;
   },
 
+
   updateOrderStatus: async (id, status) => {
     const res = await ownerService.updateOrderStatus(id, status);
     return res.data;
+  },
+
+  submitApplication: async (data) => {
+    const res = await ownerService.submitApplication(data);
+    return res.data;
+  },
+
+  getMyApplication: async () => {
+    try {
+      const res = await ownerService.getMyApplication();
+      return res.data;
+    } catch(err) { return null; }
+  },
+
+  resubmitApplication: async (id, data) => {
+    const res = await ownerService.resubmitApplication(id, data);
+    return res.data;
   }
 };
+
 

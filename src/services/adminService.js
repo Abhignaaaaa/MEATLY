@@ -12,5 +12,9 @@ export const adminService = {
   updateProductAvailability: (id, isAvailable) => apiClient.patch(`/admin/products/${id}/availability`, { isAvailable }),
   
   getOrders: (params) => apiClient.get('/admin/orders', params),
-  getOrderById: (id) => apiClient.get(`/admin/orders/${id}`)
+  getOrderById: (id) => apiClient.get(`/admin/orders/${id}`),
+  getShopApplications: () => apiClient.get('/admin/shop-applications'),
+  getShopApplicationById: (id) => apiClient.get(`/admin/shop-applications/${id}`),
+  approveShopApplication: (id) => apiClient.patch(`/admin/shop-applications/${id}/approve`),
+  rejectShopApplication: (id, reason) => apiClient.patch(`/admin/shop-applications/${id}/reject`, { reason })
 };
