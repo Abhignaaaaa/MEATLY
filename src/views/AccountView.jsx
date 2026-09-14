@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   ArrowLeft, User, Package, MapPin, Heart, HelpCircle, 
   Settings, LogOut, ChevronRight, Edit3, ShieldCheck 
@@ -11,6 +11,9 @@ import Button from '../components/common/Button';
 
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
+import { ownerRepository } from '../repositories/ownerRepository';
+import Badge from '../components/common/Badge';
+import { Clock, AlertCircle } from 'lucide-react';
 
 /**
  * MEATLY Customer Account / Profile View (`/account`)
@@ -29,6 +32,20 @@ export default function AccountView({
   const { isAuthenticated, user, logout } = useAuth();
   const { cartCount } = useCart();
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const [application, setApplication] = useState(null);
+  const [appLoading, setAppLoading] = useState(true);
+
+  useEffect(() => {
+    if (isAuthenticated && user && (!user.role || user.role === 'customer')) {
+      ownerRepository.getMyApplication().then(app => {
+        setApplication(app);
+        setAppLoading(false);
+      });
+    } else {
+      setAppLoading(false);
+    }
+  }, [isAuthenticated, user]);
+
 
   if (!isAuthenticated || !user) {
     return (
@@ -161,7 +178,61 @@ export default function AccountView({
           </div>
         </div>
 
+
+
+        {(!user.role || user.role === 'customer') && !appLoading && (
+          <>
+            {!application && (
+              <div className="bg-[#46552A] text-white rounded-[22px] p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-lg font-bold">Own a meat shop?</h3>
+                  <p className="text-sm opacity-90 mt-1">Join MEATLY and reach customers in your area.</p>
+                </div>
+                <Button variant="outline" className="text-white border-white hover:bg-[#667A3E] hover:text-white" onClick={onNavigateToShopRegister}>
+                  Register Your Shop
+                </Button>
+              </div>
+            )}
+            
+            {application?.applicationStatus === 'PENDING' && (
+              <div className="bg-orange-50 border border-orange-200 rounded-[22px] p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-orange-100 text-orange-500 rounded-full flex items-center justify-center shrink-0">
+                    <Clock size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#20231B]">Shop Application</h3>
+                    <p className="text-sm text-[#6F7268] mt-1">Application Under Review</p>
+                  </div>
+                </div>
+                <Button variant="outline" className="border-orange-200 text-orange-700 hover:bg-orange-100" onClick={onNavigateToShopRegister}>
+                  View Status
+                </Button>
+              </div>
+            )}
+
+            {application?.applicationStatus === 'REJECTED' && (
+              <div className="bg-red-50 border border-red-200 rounded-[22px] p-6 shadow-xs flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 bg-red-100 text-red-600 rounded-full flex items-center justify-center shrink-0">
+                    <AlertCircle size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#20231B]">Shop Application</h3>
+                    <p className="text-sm text-[#6F7268] mt-1">Changes Required</p>
+                  </div>
+                </div>
+                <Button variant="outline" className="border-red-200 text-red-700 hover:bg-red-100" onClick={onNavigateToShopRegister}>
+                  Edit & Resubmit
+                </Button>
+              </div>
+            )}
+          </>
+        )}
+
+
         {/* Account Menu Section */}
+
         <div className="space-y-2">
           <h3 className="text-xs font-bold text-[#6F7268] uppercase tracking-wider px-1">
             Account Settings & Support
