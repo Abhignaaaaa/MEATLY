@@ -20,9 +20,22 @@ import { errorHandler } from './middleware/error.middleware.js';
 const app: Application = express();
 
 app.use(helmet());
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'https://meatly-taupe.vercel.app',
+  config.frontendUrl
+].filter(Boolean);
+
 app.use(
   cors({
-    origin: config.frontendUrl,
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.some(o => origin.startsWith(o))) {
+        callback(null, true);
+      } else {
+        callback(null, false); // Allow requests but without CORS headers if origin doesn't match
+      }
+    },
     credentials: true,
   })
 );

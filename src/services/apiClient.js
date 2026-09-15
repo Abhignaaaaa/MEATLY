@@ -1,7 +1,16 @@
 import { getToken } from '../utils/authStorage';
 import { normalizeApiError, ApiError, ApiErrorType } from '../utils/apiErrors';
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+let BASE_URL = import.meta.env.VITE_API_BASE_URL;
+if (import.meta.env.PROD) {
+  if (!BASE_URL || BASE_URL.includes('localhost')) {
+    BASE_URL = 'https://meatly-k4pb.onrender.com/api';
+  }
+} else {
+  if (!BASE_URL) {
+    BASE_URL = 'http://localhost:5000/api';
+  }
+}
 const DEFAULT_TIMEOUT_MS = 10000;
 
 /**
